@@ -5,9 +5,6 @@ function pet-prev() {
 	sh -c "pet new `printf %q "$PREV"`"
 }
 
-zle -N pet-prev
-bindkey '^p' pet-prev
-
 function pet-select() {
 	BUFFER=$(pet search --query "$LBUFFER")
 	CURSOR=$#BUFFER
