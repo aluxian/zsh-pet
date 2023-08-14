@@ -1,7 +1,7 @@
 # Buffer standard input to a file. Useful for redirecting output of a pipe chain to the same input file.
 #
 #  $ grep -v 'a' foo.txt | sponge foo.txt
-function _pet_sponge() {
+function pet-sponge() {
   if [ -z "$1" ]; then
     echo "sponge(): No file name given!"
     exit 1
@@ -23,7 +23,7 @@ function pet-new() {
   vared -p 'Description: ' -c desc
   if [ -z "$desc" ]; then echo "missing: description"; exit 1; fi
   mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/pet"
-  jq --arg c "$cmnd" --arg d "$desc" -s '.[0] + [{ "command": $c, "description": $d }]' "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json" | _pet_sponge "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json"
+  jq --arg c "$cmnd" --arg d "$desc" -s '.[0] + [{ "command": $c, "description": $d }]' "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json" | pet-sponge "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json"
 }
 
 function pet-prev() {
@@ -55,6 +55,10 @@ function pet-upload() {
   FILE_NAME="snippets.json"
   FILE_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json"
   curl -sS -X PATCH -H "Authorization: token $ACCESS_TOKEN" -d "$(jq -n --arg file_name "$FILE_NAME" --arg content "$(cat "$FILE_PATH")" '{"files": {($file_name): {"content": $content}}}' )" "https://api.github.com/gists/$GIST_ID" | jq 'del(.history, .files, .owner, .forks)'
+}
+
+function pet-edit() {
+  $EDITOR "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json"
 }
 
 function pet() {
