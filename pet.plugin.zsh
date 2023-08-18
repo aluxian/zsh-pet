@@ -36,7 +36,7 @@ function pet-select() {
     echo "Error: fzf command not found."
   fi
   [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json" ]] || return 1
-	BUFFER=$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json" | jq -rc '.[] | "[" + .description + "]" + " " + .command' | fzf --query "$LBUFFER" | sed 's/\[.*\] //')
+	BUFFER=$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json" | jq -rc '.[] | "[" + .description + "]" + " " + .command' | fzf --query "$LBUFFER" | sed -E 's/\[[^]]*\] //')
 	CURSOR=$#BUFFER
 	zle redisplay
 }
