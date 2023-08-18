@@ -69,7 +69,8 @@ function pet-download() {
     return 1
   fi
   FILE_NAME="snippets.json"
-  FILE_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json"
+  FILE_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/pet/${FILE_NAME}"
+  mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/pet"
   curl -sS -H "Authorization: token $ACCESS_TOKEN" "https://api.github.com/gists/$GIST_ID" | jq -r ".files[\"$FILE_NAME\"].content" > "$FILE_PATH"
 }
 
