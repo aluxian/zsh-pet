@@ -38,8 +38,8 @@ function pet-select() {
 	[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json" ]] || return 1
 	setopt extendedglob
 	BUFFER=$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json" | \
-		jq -rc '.[] | [ "\u001b[35m" + .description, "\u001b[36m  " + .command ] | join("\u001f")' | \
-		fzf --ansi --delimiter $'\x1f' --with-nth 1,2 +s --query "$LBUFFER" | \
+		jq -rc 'reverse | .[] | [ "\u001b[35m" + .description, "\u001b[36m  " + .command ] | join("\u001f")' | \
+		fzf --ansi --delimiter $'\x1f' --with-nth 1,2 --query "$LBUFFER" | \
 		cut -d$'\x1f' -f2 | \
 		cut -c3-)
 	CURSOR=$#BUFFER
