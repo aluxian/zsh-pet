@@ -32,11 +32,16 @@ function pet-prev() {
 }
 
 function pet-select() {
-  if ! command -v fzf > /dev/null 2>&1; then
-    echo "Error: fzf command not found."
-  fi
-  [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json" ]] || return 1
-	BUFFER=$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json" | jq -rc '.[] | "[" + .description + "]" + " " + .command' | fzf --query "$LBUFFER" | sed -E 's/\[[^]]*\] //')
+	if ! command -v fzf > /dev/null 2>&1; then
+		echo "Error: fzf command not found."
+	fi
+	[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json" ]] || return 1
+	setopt extendedglob
+	BUFFER=$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json" | \
+		jq -rc '.[] | [ "\u001b[35m" + .description, "\u001b[36m  " + .command ] | join("\u001f")' | \
+		fzf --ansi --delimiter $'\x1f' --with-nth 1,2 +s --query "$LBUFFER" | \
+		cut -d$'\x1f' -f2 | \
+		cut -c3-)
 	CURSOR=$#BUFFER
 	zle redisplay
 }
