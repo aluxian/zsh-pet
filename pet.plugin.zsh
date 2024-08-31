@@ -85,3 +85,14 @@ function pet-edit() {
 
 zle -N pet-select
 bindkey '^s' pet-select
+
+function pet() {
+    echo "Pet - Snippet Manager"
+    echo "Usage:"
+    echo "  pet-new [command] [description] - Add a new snippet"
+    echo "  pet-prev - Add the previous command as a snippet"
+    echo "  pet-select - Select a snippet (bound to Ctrl+S)"
+    echo "  pet-upload <gist_id> - Upload snippets to a GitHub Gist"
+    echo "  pet-download <gist_id> - Download snippets from a GitHub Gist"
+    echo "  pet-edit - Edit snippets file"
+}
