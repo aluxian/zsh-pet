@@ -52,11 +52,13 @@ function pet-upload() {
     echo "Error: provide a gist id"
     return 1
   fi
+  
   ACCESS_TOKEN="$(grep -o 'gho_[0-9a-zA-Z]*' "${XDG_CONFIG_HOME:-$HOME/.config}/gh/hosts.yml" | head -n 1)"
   if [[ -z "$ACCESS_TOKEN" ]]; then
     echo "Error: access token not found in ${XDG_CONFIG_HOME:-$HOME/.config}/gh/hosts.yml"
     return 1
   fi
+
   FILE_NAME="snippets.json"
   FILE_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json"
   curl -sS -X PATCH -H "Authorization: token $ACCESS_TOKEN" -d "$(jq -n --arg file_name "$FILE_NAME" --arg content "$(cat "$FILE_PATH")" '{"files": {($file_name): {"content": $content}}}' )" "https://api.github.com/gists/$GIST_ID" | jq 'del(.history, .files, .owner, .forks)'
@@ -68,13 +70,15 @@ function pet-download() {
     echo "Error: provide a gist id"
     return 1
   fi
+
   ACCESS_TOKEN="$(grep -o 'gho_[0-9a-zA-Z]*' "${XDG_CONFIG_HOME:-$HOME/.config}/gh/hosts.yml" | head -n 1)"
   if [[ -z "$ACCESS_TOKEN" ]]; then
     echo "Error: access token not found in ${XDG_CONFIG_HOME:-$HOME/.config}/gh/hosts.yml"
     return 1
   fi
+
   FILE_NAME="snippets.json"
-  FILE_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/pet/${FILE_NAME}"
+  FILE_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/pet/$FILE_NAME"
   mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/pet"
   curl -sS -H "Authorization: token $ACCESS_TOKEN" "https://api.github.com/gists/$GIST_ID" | jq -r ".files[\"$FILE_NAME\"].content" > "$FILE_PATH"
 }
@@ -82,9 +86,6 @@ function pet-download() {
 function pet-edit() {
   $EDITOR "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json"
 }
-
-zle -N pet-select
-bindkey '^s' pet-select
 
 function pet() {
     echo "Pet - Snippet Manager"
@@ -96,3 +97,6 @@ function pet() {
     echo "  pet-download <gist_id> - Download snippets from a GitHub Gist"
     echo "  pet-edit - Edit snippets file"
 }
+
+zle -N pet-select
+bindkey '^s' pet-select
