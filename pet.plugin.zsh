@@ -83,9 +83,5 @@ function pet-edit() {
   $EDITOR "${XDG_CONFIG_HOME:-$HOME/.config}/pet/snippets.json"
 }
 
-function pet() {
-  pet-new "$@"
-}
-
 zle -N pet-select
 bindkey '^s' pet-select
